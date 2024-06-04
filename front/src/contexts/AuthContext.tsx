@@ -1,3 +1,4 @@
+import qs from 'qs';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -17,8 +18,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [signedIn, setSignedIn] = useState(false);
 
   const signInWithGoogle = useCallback(() => {
-    setSignedIn(true);
-    toast.info('Entrar com o Google!');
+    const baseURL = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+    const options = qs.stringify({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      redirect_uri: 'http://localhost:5173/callbacks/google',
+      response_type: 'code',
+      scope: 'email profile',
+    });
+
+    window.location.href = `${baseURL}?${options}`;
   }, []);
 
   const signOut = useCallback(() => {
